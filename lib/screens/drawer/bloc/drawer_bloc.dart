@@ -8,8 +8,6 @@
  * @link https://store.webkul.com/license.html
  */
 
-
-
 import 'package:bagisto_app_demo/utils/application_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -28,23 +26,17 @@ class DrawerBloc extends Bloc<DrawerEvent, DrawerPageBaseState> {
     on<DrawerEvent>(mapEventToState);
   }
 
-  void mapEventToState(
-      DrawerEvent event, Emitter<DrawerPageBaseState> emit) async {
+  void mapEventToState(DrawerEvent event, Emitter<DrawerPageBaseState> emit) async {
     if (event is FetchDrawerPageEvent) {
       try {
-        GetDrawerCategoriesData? getDrawerCategoriesData =
-        await repository?.getDrawerCategoriesList(event.categoryId);
+        GetDrawerCategoriesData? getDrawerCategoriesData = await repository?.getDrawerCategoriesList(event.categoryId);
         if (getDrawerCategoriesData?.responseStatus == true) {
-          emit(FetchDrawerPageDataState.success(
-              getCategoriesDrawerData: getDrawerCategoriesData));
+          emit(FetchDrawerPageDataState.success(getCategoriesDrawerData: getDrawerCategoriesData));
         } else {
-          emit(FetchDrawerPageDataState.fail(
-              error: getDrawerCategoriesData?.success));
+          emit(FetchDrawerPageDataState.fail(error: getDrawerCategoriesData?.success));
         }
-      }
-     catch (e) {
-        emit(FetchDrawerPageDataState.fail(
-            error: StringConstants.contactAdmin.localized()));
+      } catch (e) {
+        emit(FetchDrawerPageDataState.fail(error: StringConstants.contactAdmin.localized()));
       }
     }
     if (event is CurrencyLanguageEvent) {
@@ -58,7 +50,7 @@ class DrawerBloc extends Bloc<DrawerEvent, DrawerPageBaseState> {
           emit(FetchLanguageCurrencyState.fail(error: currencyLanguageList?.success));
         }
       } catch (e) {
-        emit(FetchLanguageCurrencyState.fail(error:StringConstants.somethingWrong.localized()));
+        emit(FetchLanguageCurrencyState.fail(error: StringConstants.somethingWrong.localized()));
       }
     }
     if (event is FetchCMSDataEvent) {

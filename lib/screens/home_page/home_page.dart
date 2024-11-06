@@ -10,6 +10,7 @@
 
 import 'dart:async';
 import 'dart:io';
+
 import 'package:bagisto_app_demo/screens/home_page/utils/fetch_shared_pref_helper.dart';
 import 'package:bagisto_app_demo/screens/home_page/utils/route_argument_helper.dart';
 import 'package:bagisto_app_demo/screens/home_page/widget/home_page_loader_view.dart';
@@ -22,6 +23,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hive/hive.dart';
+
 import '../../data_model/account_models/account_info_details.dart';
 import '../../data_model/currency_language_model.dart';
 import '../../services/graph_ql.dart';
@@ -97,6 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   fetchOfflineProductData() async {
+
     getCategoriesDrawerDb = await Hive.openBox("getCategoriesDrawerData");
     if ((getCategoriesDrawerDb?.length ?? 0) > 0) {
       getCategoriesDrawerData = getCategoriesDrawerDb?.getAt(0);
@@ -109,7 +112,6 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
     _myStreamCtrl.close();
   }
-
 
   Widget createClient() {
     return GraphQLProvider(
@@ -130,7 +132,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Directionality(
       textDirection: GlobalData.contentDirection(),
       child: Scaffold(
-        backgroundColor: Theme.of(context).brightness==Brightness.light?Colors.grey.shade200: Theme.of(context).colorScheme.primary,
+        backgroundColor: Theme.of(context).brightness == Brightness.light ? Colors.grey.shade200 : Theme.of(context).colorScheme.primary,
         appBar: CommonAppBar(StringConstants.builderAppName.localized()),
         drawer: _drawerData(context),
         body: buildView(context),
@@ -145,9 +147,7 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (BuildContext context, DrawerPageBaseState state) {
         if (state is FetchDrawerPageDataState) {
           if (state.status == DrawerStatus.success) {
-            if (getCategoriesDrawerDb != null &&
-                getCategoriesDrawerDb!.length > 0 &&
-                getCategoriesDrawerDb?.getAt(0) != null) {
+            if (getCategoriesDrawerDb != null && getCategoriesDrawerDb!.length > 0 && getCategoriesDrawerDb?.getAt(0) != null) {
               getCategoriesDrawerDb?.deleteAt(0);
             }
             getCategoriesDrawerData = state.getCategoriesDrawerData;
@@ -166,28 +166,28 @@ class _HomeScreenState extends State<HomeScreen> {
         }
         if (state is FetchCMSDataState) {
           cmsData = state.cmsData;
-          if(isLoggedIn){
+          if (isLoggedIn) {
             homePageBloc?.add(CustomerDetailsEvent());
           }
         }
 
         return getCategoriesDrawerData != null
             ? DrawerListView(
-          getDrawerCategoriesData: getCategoriesDrawerData!,
-          isLoggedIn: isLoggedIn,
-          customerUserName: customerUserName,
-          image: image,
-          customerCurrency: customerCurrency,
-          cmsData: cmsData,
-          currencyLanguageList: currencyLanguageList,
-          customerDetails: customerDetails,
-          customerLanguage: customerLanguage,
-          loginCallback: (isLogged){
-            setState(() {
-              isLoggedIn = isLogged;
-            });
-          },
-        )
+                getDrawerCategoriesData: getCategoriesDrawerData!,
+                isLoggedIn: isLoggedIn,
+                customerUserName: customerUserName,
+                image: image,
+                customerCurrency: customerCurrency,
+                cmsData: cmsData,
+                currencyLanguageList: currencyLanguageList,
+                customerDetails: customerDetails,
+                customerLanguage: customerLanguage,
+                loginCallback: (isLogged) {
+                  setState(() {
+                    isLoggedIn = isLogged;
+                  });
+                },
+              )
             : const SizedBox();
       },
     );
@@ -204,13 +204,12 @@ class _HomeScreenState extends State<HomeScreen> {
           } else if (state.status == Status.success) {
             addToCartModel = state.graphQlBaseModel;
             ShowMessage.successNotification(state.graphQlBaseModel?.message ?? "", context);
-            SharedPreferenceHelper.setCartCount(
-                addToCartModel?.cart?.itemsCount ?? 0);
+            SharedPreferenceHelper.setCartCount(addToCartModel?.cart?.itemsCount ?? 0);
             _myStreamCtrl.sink.add(addToCartModel?.cart?.itemsCount ?? 0);
           }
         } else if (state is FetchAddWishlistHomepageState) {
           if (state.status == Status.fail) {
-            ShowMessage.errorNotification(state.error ??"", context);
+            ShowMessage.errorNotification(state.error ?? "", context);
           } else if (state.status == Status.success) {
             ShowMessage.successNotification(state.response?.success ?? "", context);
           }
@@ -271,8 +270,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (state is AddToCartState) {
       if (state.status == Status.success) {
         isLoading = false;
-        SharedPreferenceHelper.setCartCount(
-            addToCartModel?.cart?.itemsCount ?? 0);
+        SharedPreferenceHelper.setCartCount(addToCartModel?.cart?.itemsCount ?? 0);
         _myStreamCtrl.sink.add(addToCartModel?.cart?.itemsCount ?? 0);
       }
     }
@@ -283,7 +281,7 @@ class _HomeScreenState extends State<HomeScreen> {
     /// all products state
     if (state is FetchAllProductsState) {
       if (state.status == Status.success) {
-          allProducts?.add(state.allProducts);
+        allProducts?.add(state.allProducts);
       }
     }
 
@@ -305,15 +303,14 @@ class _HomeScreenState extends State<HomeScreen> {
         customHomeData = state.homepageSliders;
 
         getHomePageData(customHomeData);
-
       } else if (state.status == Status.fail) {}
     }
 
     if (state is CustomerDetailsState) {
       if (state.status == Status.success) {
         customerDetails = state.accountInfoDetails;
-          image = customerDetails?.data?.imageUrl;
-          SharedPreferenceHelper.setCustomerImage(image ?? "");
+        image = customerDetails?.data?.imageUrl;
+        SharedPreferenceHelper.setCustomerImage(image ?? "");
       }
       if (state.status == Status.fail) {}
     }
@@ -325,15 +322,7 @@ class _HomeScreenState extends State<HomeScreen> {
       if (state.status == Status.fail) {}
     }
 
-    return (customHomeData?.themeCustomization ?? []).isEmpty
-        ? const HomePageLoader()
-        : HomePagView(
-        customHomeData,
-        isLoading,
-        getHomeCategoriesData,
-        isLoggedIn,
-        homePageBloc
-    );
+    return (customHomeData?.themeCustomization ?? []).isEmpty ? const HomePageLoader() : HomePagView(customHomeData, isLoading, getHomeCategoriesData, isLoggedIn, homePageBloc);
   }
 
   ///fetch data from shared pref
@@ -367,23 +356,23 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       if (Platform.isAndroid) {
         var data = await methodChannel.invokeMethod('initialLink');
-          var splitData = data.toString().split("/");
-          Navigator.of(context).pushNamed(productScreen,
-              arguments: PassProductData(
-                title: splitData.last,
-                urlKey: splitData.last,
-                productId: 1,
-              ));
+        var splitData = data.toString().split("/");
+        Navigator.of(context).pushNamed(productScreen,
+            arguments: PassProductData(
+              title: splitData.last,
+              urlKey: splitData.last,
+              productId: 1,
+            ));
         return data;
       } else if (Platform.isIOS) {
         var data = await methodChannel.invokeMethod('uni_links/events');
-          var splitData = data.toString().split("/");
-          Navigator.of(context).pushNamed(productScreen,
-              arguments: PassProductData(
-                title: splitData.last,
-                urlKey: splitData.last,
-                productId: 1,
-              ));
+        var splitData = data.toString().split("/");
+        Navigator.of(context).pushNamed(productScreen,
+            arguments: PassProductData(
+              title: splitData.last,
+              urlKey: splitData.last,
+              productId: 1,
+            ));
         return data;
       } else {
         return 'OS NOT SUPPORTED';
@@ -398,22 +387,15 @@ class _HomeScreenState extends State<HomeScreen> {
     await Future.wait(customHomeData!.themeCustomization!.map((element) async {
       List<Map<String, dynamic>>? filters = [];
 
-      if(element.type == "category_carousel"){
+      if (element.type == "category_carousel") {
         element.translations?.firstOrNull?.options?.filters?.forEach((element) {
-          filters.add({
-            "key": '\"${element.key}\"',
-            "value": '\"${element.value}\"'
-          });
+          filters.add({"key": '\"${element.key}\"', "value": '\"${element.value}\"'});
         });
         homePageBloc?.add(FetchHomePageCategoriesEvent(filters: filters));
-      }
-      else if(element.type == "product_carousel"){
+      } else if (element.type == "product_carousel") {
         filters.clear();
         element.translations?.firstOrNull?.options?.filters?.forEach((element) {
-          filters.add({
-            "key": '\"${element.key}\"',
-            "value": '\"${element.value}\"'
-          });
+          filters.add({"key": '\"${element.key}\"', "value": '\"${element.value}\"'});
         });
         homePageBloc?.add(FetchAllProductsEvent(filters));
       }
@@ -421,6 +403,4 @@ class _HomeScreenState extends State<HomeScreen> {
       await Future.delayed(const Duration(milliseconds: 100));
     }));
   }
-
 }
-

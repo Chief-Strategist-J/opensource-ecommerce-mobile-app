@@ -1,11 +1,12 @@
 import 'package:bagisto_app_demo/utils/route_constants.dart';
 import 'package:flutter/material.dart';
+
 import '../utils/app_constants.dart';
 
-
-class CommonAppBar extends StatelessWidget implements PreferredSizeWidget{
+class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final int? index;
+
   const CommonAppBar(this.title, {Key? key, this.index}) : super(key: key);
 
   @override
@@ -14,14 +15,12 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget{
       elevation: 4,
       title: Text(
         title,
-        style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: AppSizes.spacingLarge),
+        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: AppSizes.spacingLarge),
       ),
       actions: [
         IconButton(
             onPressed: () {
-              if(index != 0){
+              if (index != 0) {
                 Navigator.pushNamed(context, searchScreen);
               }
             },
@@ -30,7 +29,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget{
             )),
         IconButton(
             onPressed: () {
-              if(index != 1){
+              if (index != 1) {
                 Navigator.pushNamed(context, compareScreen);
               }
             },
@@ -40,7 +39,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget{
         IconButton(
           icon: const Icon(Icons.shopping_bag_outlined),
           onPressed: () {
-            if(index != 2){
+            if (index != 2) {
               Navigator.pushNamed(context, cartScreen);
             }
           },

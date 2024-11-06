@@ -1,16 +1,7 @@
-/*
- * Webkul Software.
- * @package Mobikul Application Code.
- * @Category Mobikul
- * @author Webkul <support@webkul.com>
- * @Copyright (c) Webkul Software Private Limited (https://webkul.com)
- * @license https://store.webkul.com/license.html
- * @link https://store.webkul.com/license.html
- */
 
-// must_be_immutable, void_checks
 
 import 'dart:io';
+
 import 'package:bagisto_app_demo/screens/home_page/data_model/get_categories_drawer_data_model.dart';
 import 'package:bagisto_app_demo/screens/home_page/data_model/new_product_data.dart';
 import 'package:bagisto_app_demo/utils/app_global_data.dart';
@@ -45,8 +36,8 @@ AndroidNotificationChannel channel = const AndroidNotificationChannel(
   'High Importance Notifications', // title// description
   importance: Importance.high,
 );
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
 Future<void> main() async {
   HttpOverrides.global = MyHttpOverrides();
   String selectedLanguage = "en";
@@ -55,14 +46,10 @@ Future<void> main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
-  GlobalData.selectedLanguage =
-      await SharedPreferenceHelper.getCustomerLanguage();
+  GlobalData.selectedLanguage = await SharedPreferenceHelper.getCustomerLanguage();
   await Firebase.initializeApp();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  await flutterLocalNotificationsPlugin
-      .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>()
-      ?.createNotificationChannel(channel);
+  await flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.createNotificationChannel(channel);
   await initHiveForFlutter();
   hiveRegisterAdapter();
   runApp(
@@ -92,6 +79,7 @@ Future<void> hiveRegisterAdapter() async {
 class RestartWidget extends StatefulWidget {
   const RestartWidget({Key? key, required this.child}) : super(key: key);
   final Widget child;
+
   static restartApp(BuildContext context) {
     context.findAncestorStateOfType<_RestartWidgetState>()?.restartApp();
   }
@@ -104,6 +92,7 @@ class RestartWidget extends StatefulWidget {
 
 class _RestartWidgetState extends State<RestartWidget> {
   Key _key = UniqueKey();
+
   void restartApp() {
     setState(() {
       _key = UniqueKey();
@@ -121,9 +110,12 @@ class _RestartWidgetState extends State<RestartWidget> {
 
 class BagistoApp extends StatefulWidget {
   const BagistoApp(
-    this.selectedLanguage, {Key? key,}) : super(key: key);
+    this.selectedLanguage, {
+    Key? key,
+  }) : super(key: key);
 
   final String? selectedLanguage;
+
   @override
   State<BagistoApp> createState() => _BagistoAppState();
 }
@@ -139,14 +131,12 @@ class _BagistoAppState extends State<BagistoApp> {
     super.initState();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return OverlaySupport.global(
         child: ChangeNotifierProvider(
       create: (_) => ThemeProvider(),
-      child: Consumer<ThemeProvider>(
-          builder: (context, ThemeProvider themeNotifier, child) {
+      child: Consumer<ThemeProvider>(builder: (context, ThemeProvider themeNotifier, child) {
         return MaterialApp(
           theme: MobikulTheme.lightTheme,
           themeMode: ThemeMode.system,
@@ -164,9 +154,7 @@ class _BagistoAppState extends State<BagistoApp> {
           ],
           localeResolutionCallback: (locale, supportedLocales) {
             for (var supportedLocaleLanguage in supportedLocales) {
-              if (supportedLocaleLanguage.languageCode ==
-                      locale?.languageCode &&
-                  supportedLocaleLanguage.countryCode == locale?.countryCode) {
+              if (supportedLocaleLanguage.languageCode == locale?.languageCode && supportedLocaleLanguage.countryCode == locale?.countryCode) {
                 return supportedLocaleLanguage;
               }
             }
@@ -182,8 +170,6 @@ class _BagistoAppState extends State<BagistoApp> {
 class MyHttpOverrides extends HttpOverrides {
   @override
   HttpClient createHttpClient(SecurityContext? context) {
-    return super.createHttpClient(context)
-      ..badCertificateCallback =
-          (X509Certificate cert, String host, int port) => true;
+    return super.createHttpClient(context)..badCertificateCallback = (X509Certificate cert, String host, int port) => true;
   }
 }

@@ -13,6 +13,7 @@ import 'package:bagisto_app_demo/screens/account/bloc/account_info_bloc.dart';
 import 'package:bagisto_app_demo/screens/account/bloc/account_info_detail_state.dart';
 import 'package:bagisto_app_demo/screens/account/utils/index.dart';
 import 'package:bagisto_app_demo/screens/cart_screen/cart_index.dart';
+
 import '../../../utils/index.dart';
 import '../../home_page/utils/fetch_shared_pref_helper.dart';
 
@@ -43,12 +44,9 @@ bool isLoad = true;
 String? base64string;
 AccountInfoBloc? accountInfoBloc;
 
-GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
-    GlobalKey<ScaffoldMessengerState>();
+GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
-class _AccountScreenState extends State<AccountScreen>
-    with EmailValidator, PhoneNumberValidator {
-
+class _AccountScreenState extends State<AccountScreen> with EmailValidator, PhoneNumberValidator {
   @override
   void initState() {
     isLoad = true;
@@ -75,11 +73,9 @@ class _AccountScreenState extends State<AccountScreen>
           bottomNavigationBar: SizedBox(
             height: 80,
             child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 14.0, horizontal: 12),
+              padding: const EdgeInsets.symmetric(vertical: 14.0, horizontal: 12),
               child: MaterialButton(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
                 elevation: 2.0,
                 height: AppSizes.buttonHeight,
                 minWidth: MediaQuery.of(context).size.width,
@@ -87,10 +83,9 @@ class _AccountScreenState extends State<AccountScreen>
                 onPressed: () {
                   _onPressSaveButton();
                 },
-                child: Text(StringConstants.save.localized().toUpperCase(),
-                  style: TextStyle(
-                      fontSize: AppSizes.spacingLarge,
-                      color: MobikulTheme.primaryColor),
+                child: Text(
+                  StringConstants.save.localized().toUpperCase(),
+                  style: TextStyle(fontSize: AppSizes.spacingLarge, color: MobikulTheme.primaryColor),
                 ),
               ),
             ),
@@ -106,11 +101,10 @@ class _AccountScreenState extends State<AccountScreen>
       listener: (BuildContext context, AccountInfoBaseState state) {
         if (state is AccountInfoUpdateState) {
           if (state.status == AccountStatus.fail) {
-            ShowMessage.errorNotification(StringConstants.invalidData.localized(),context);
+            ShowMessage.errorNotification(StringConstants.invalidData.localized(), context);
           } else if (state.status == AccountStatus.success) {
             if (state.accountUpdate?.status == true) {
-              ShowMessage.successNotification(
-                  state.accountUpdate?.message ?? "", context);
+              ShowMessage.successNotification(state.accountUpdate?.message ?? "", context);
 
               Future.delayed(const Duration(seconds: 2)).then((value) {
                 _updateSharedPreferences(_accountUpdate!);
@@ -118,8 +112,7 @@ class _AccountScreenState extends State<AccountScreen>
               });
             } else {
               Navigator.of(context).pop();
-              ShowMessage.errorNotification(
-                  state.accountUpdate?.success ?? "",context);
+              ShowMessage.errorNotification(state.accountUpdate?.success ?? "", context);
             }
           }
         } else if (state is AccountInfoDeleteState) {
@@ -127,8 +120,7 @@ class _AccountScreenState extends State<AccountScreen>
             ShowMessage.errorNotification(state.successMsg ?? "", context);
           } else if (state.status == AccountStatus.success) {
             if (state.baseModel?.status == true) {
-              ShowMessage.successNotification(
-                  state.baseModel?.success ?? "", context);
+              ShowMessage.successNotification(state.baseModel?.success ?? "", context);
               Navigator.pop(context);
               HomePageRepositoryImp().callLogoutApi().then((response) async {
                 Navigator.pop(context);
@@ -143,8 +135,7 @@ class _AccountScreenState extends State<AccountScreen>
             } else {
               Navigator.pop(context);
               Navigator.of(context).pop();
-              ShowMessage.warningNotification(
-                  state.baseModel?.success ?? "", context);
+              ShowMessage.warningNotification(state.baseModel?.success ?? "", context);
             }
           }
         }
@@ -232,8 +223,7 @@ class _AccountScreenState extends State<AccountScreen>
                     const SizedBox(
                       height: AppSizes.spacingMedium,
                     ),
-                    CircularProgressIndicatorClass.circularProgressIndicator(
-                        context),
+                    CircularProgressIndicatorClass.circularProgressIndicator(context),
                     const SizedBox(height: AppSizes.spacingWide),
                     SizedBox(
                       width: MediaQuery.of(context).size.width / 2.5,
@@ -272,12 +262,9 @@ class _AccountScreenState extends State<AccountScreen>
   ///this method will update the changes in the save shared preference data
   Future _updateSharedPreferences(AccountUpdate accountUpdate) async {
     await SharedPreferenceHelper.setCustomerLoggedIn(true);
-    await SharedPreferenceHelper.setCustomerName(
-        accountUpdate.data?.name ?? "");
-    await SharedPreferenceHelper.setCustomerImage(
-        accountUpdate.data?.imageUrl ?? "");
-    await SharedPreferenceHelper.setCustomerEmail(
-        accountUpdate.data?.email ?? "");
+    await SharedPreferenceHelper.setCustomerName(accountUpdate.data?.name ?? "");
+    await SharedPreferenceHelper.setCustomerImage(accountUpdate.data?.imageUrl ?? "");
+    await SharedPreferenceHelper.setCustomerEmail(accountUpdate.data?.email ?? "");
     return true;
   }
 }

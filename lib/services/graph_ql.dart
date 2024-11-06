@@ -9,7 +9,9 @@
  */
 
 import 'dart:developer';
+
 import 'package:graphql_flutter/graphql_flutter.dart';
+
 import '../utils/app_global_data.dart';
 import '../utils/server_configuration.dart';
 import '../utils/shared_preference_helper.dart';
@@ -21,16 +23,17 @@ class GraphQlApiCalling {
   final authLink = AuthLink(
     getToken: SharedPreferenceHelper.getCustomerToken,
   );
-  final httpLink =
-      HttpLink(baseUrl, defaultHeaders: {
-    "Cookie": "${GlobalData.cookie}",
-    "x-currency": "${GlobalData.currency}",
-    "x-locale": "${GlobalData.selectedLanguage ?? GlobalData.locale}"
-  });
+  final httpLink = HttpLink(
+    baseUrl,
+    defaultHeaders: {
+      "Cookie": "${GlobalData.cookie}",
+      "x-currency": "${GlobalData.currency}",
+      "x-locale": "${GlobalData.selectedLanguage ?? GlobalData.locale}",
+    },
+  );
 
   GraphQLClient clientToQuery() {
-    SharedPreferenceHelper.getCustomerToken()
-        .then((value) => log("authLink---->$value"));
+    SharedPreferenceHelper.getCustomerToken().then((value) => log("authLink---->$value"));
     log("headers ----> ${httpLink.defaultHeaders}");
     return GraphQLClient(
       cache: GraphQLCache(store: HiveStore()),

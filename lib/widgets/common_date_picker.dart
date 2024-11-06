@@ -1,16 +1,7 @@
-/*
- * Webkul Software.
- * @package Mobikul Application Code.
- * @Category Mobikul
- * @author Webkul <support@webkul.com>
- * @Copyright (c) Webkul Software Private Limited (https://webkul.com)
- * @license https://store.webkul.com/license.html
- * @link https://store.webkul.com/license.html
- */
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'dart:async';
 
 import '../utils/index.dart';
 
@@ -22,15 +13,7 @@ class CommonDatePicker extends StatefulWidget {
   final bool? isRequired;
   final int? save;
 
-  const CommonDatePicker(
-      {Key? key,
-        this.controller,
-        this.save,
-        this.hintText,
-        this.labelText,
-        this.helperText,
-        this.isRequired = false})
-      : super(key: key);
+  const CommonDatePicker({Key? key, this.controller, this.save, this.hintText, this.labelText, this.helperText, this.isRequired = false}) : super(key: key);
 
   @override
   State<CommonDatePicker> createState() => _CommonDatePickerState();
@@ -43,8 +26,7 @@ class _CommonDatePickerState extends State<CommonDatePicker> {
 
   @override
   void initState() {
-    if (widget.controller?.text != null &&
-        (widget.controller?.text ?? "").isNotEmpty) {
+    if (widget.controller?.text != null && (widget.controller?.text ?? "").isNotEmpty) {
       String? text = widget.controller?.text ?? selectedDate.toString();
       DateTime tempDate = DateFormat('yyyy-MM-dd').parse(text);
       selectedDate = tempDate;
@@ -64,27 +46,16 @@ class _CommonDatePickerState extends State<CommonDatePicker> {
           return Theme(
             data: ThemeData(
               primarySwatch: Colors.grey,
-              colorScheme: ColorScheme.light(
-                  primary: Theme.of(context).colorScheme.onBackground,
-                  onPrimary: Colors.white,
-                  onSurface: Colors.black,
-                  secondary: Colors.black),
+              colorScheme: ColorScheme.light(primary: Theme.of(context).colorScheme.onBackground, onPrimary: Colors.white, onSurface: Colors.black, secondary: Colors.black),
               dialogBackgroundColor: Colors.white,
             ),
             child: child ?? const Text(""),
           );
         },
         context: context,
-        initialDate: (widget.controller?.text ?? "").isNotEmpty
-            ? selectedDate
-            : (widget.save == 1
-            ? selectedDate.add(const Duration(days: 0))
-            : DateTime.now().add(const Duration(days: 0))),
-        firstDate: widget.save == 1
-            ? selectedDate.add(const Duration(days: 0))
-            : DateTime(1950 - 01 - 01),
-        lastDate: DateTime.now().add(
-            const Duration(days: 0, minutes: 0, seconds: 1, milliseconds: 1)));
+        initialDate: (widget.controller?.text ?? "").isNotEmpty ? selectedDate : (widget.save == 1 ? selectedDate.add(const Duration(days: 0)) : DateTime.now().add(const Duration(days: 0))),
+        firstDate: widget.save == 1 ? selectedDate.add(const Duration(days: 0)) : DateTime(1950 - 01 - 01),
+        lastDate: DateTime.now().add(const Duration(days: 0, minutes: 0, seconds: 1, milliseconds: 1)));
 
     DateTime date = DateTime.parse(picked.toString());
 
@@ -98,8 +69,7 @@ class _CommonDatePickerState extends State<CommonDatePicker> {
       // picked.then((value) {
       setState(() {
         currentDate = picked;
-        widget.controller?.value =
-            TextEditingValue(text: formattedDate.toString());
+        widget.controller?.value = TextEditingValue(text: formattedDate.toString());
       });
       // });
     }
@@ -120,7 +90,7 @@ class _CommonDatePickerState extends State<CommonDatePicker> {
                   FocusScope.of(context).requestFocus(FocusNode());
                   if (widget.save == 1) {
                     initDate = await SharedPreferenceHelper.getDate();
-                    if(initDate.isNotEmpty) {
+                    if (initDate.isNotEmpty) {
                       selectedDate = DateTime.parse(initDate);
                     }
                   }

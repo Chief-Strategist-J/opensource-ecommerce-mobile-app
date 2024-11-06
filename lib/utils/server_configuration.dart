@@ -5,7 +5,7 @@ const int defaultSplashDelay = 3;
 
 
 // local instance bagisto 2.0 updated
-const String baseUrl = "";
+const String baseUrl = "https://estore.scaibu.co.in/graphql";
 
 const String defaultWebsiteId = "1";
 
@@ -16,10 +16,10 @@ const String defaultChannelId = "1";
 const String defaultStoreCode = "en";
 
 ///default store code
-const String defaultChannelName = "";
+const String defaultChannelName = "com.webkul.bagisto_mobikul/channel";
 
 ///default channel id
-const String defaultCurrencyCode = "";
+const String defaultCurrencyCode = "usd";
 const String storage = "storage/";
 
 ///this storage keyword is appending with image url to get the image

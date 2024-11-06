@@ -9,14 +9,16 @@
  */
 
 import 'dart:developer';
-import 'package:flutter/material.dart';
+
 import 'package:bagisto_app_demo/data_model/account_models/account_update_model.dart';
 import 'package:bagisto_app_demo/data_model/order_model/order_detail_model.dart';
 import 'package:bagisto_app_demo/data_model/order_model/orders_list_data_model.dart';
 import 'package:bagisto_app_demo/data_model/review_model/review_model.dart';
 import 'package:bagisto_app_demo/data_model/sign_in_model/signin_model.dart';
 import 'package:bagisto_app_demo/screens/cart_screen/cart_model/cart_data_model.dart';
+import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+
 import '../data_model/account_models/account_info_details.dart';
 import '../data_model/add_to_wishlist_model/add_wishlist_model.dart';
 import '../data_model/categories_data_model/filter_product_model.dart';
@@ -60,10 +62,7 @@ class ApiClient {
   ) async {
     log("\nDATA -> ${result.data}\n\n");
     log("\n COOKIE DATA -> ${result.context.entry<HttpLinkResponseContext>()?.headers?['set-cookie']}\n\n");
-    await SharedPreferenceHelper.setCookie(result.context
-            .entry<HttpLinkResponseContext>()
-            ?.headers?['set-cookie'] ??
-        "");
+    await SharedPreferenceHelper.setCookie(result.context.entry<HttpLinkResponseContext>()?.headers?['set-cookie'] ?? "");
     GlobalData.cookie = await SharedPreferenceHelper.getCookie();
     log("\nEXCEPTION -> ${result.exception}\n\n");
 
@@ -86,13 +85,15 @@ class ApiClient {
     return parser(data ?? {});
   }
 
-  Future<GetDrawerCategoriesData?> homeCategories(
-      {int? id, List<Map<String, dynamic>>? filters}) async {
-    var response = await (client.clientToQuery()).query(QueryOptions(
+  Future<GetDrawerCategoriesData?> homeCategories({int? id, List<Map<String, dynamic>>? filters}) async {
+    var response = await (client.clientToQuery()).query(
+      QueryOptions(
         document: gql(
           (filters ?? []).isNotEmpty ? mutation.homeCategoriesFilters(filters: filters) : mutation.homeCategories(id: id ?? 1),
         ),
-        fetchPolicy: FetchPolicy.networkOnly));
+        fetchPolicy: FetchPolicy.networkOnly,
+      ),
+    );
 
     return handleResponse(
       response,
@@ -146,24 +147,10 @@ class ApiClient {
     );
   }
 
-  Future<AddToCartModel?> addToCart(
-      int quantity,
-      String productId,
-      List downloadLinks,
-      List groupedParams,
-      List bundleParams,
-      List configurableParams,
-      String? configurableId) async {
+  Future<AddToCartModel?> addToCart(int quantity, String productId, List downloadLinks, List groupedParams, List bundleParams, List configurableParams, String? configurableId) async {
     var response = await (client.clientToQuery()).mutate(MutationOptions(
         document: gql(
-          mutation.addToCart(
-              quantity: quantity,
-              productId: productId,
-              downloadableLinks: downloadLinks,
-              groupedParams: groupedParams,
-              bundleParams: bundleParams,
-              configurableParams: configurableParams,
-              configurableId: configurableId),
+          mutation.addToCart(quantity: quantity, productId: productId, downloadableLinks: downloadLinks, groupedParams: groupedParams, bundleParams: bundleParams, configurableParams: configurableParams, configurableId: configurableId),
         ),
         fetchPolicy: FetchPolicy.networkOnly));
     return handleResponse(
@@ -253,15 +240,17 @@ class ApiClient {
   }
 
   Future<AccountInfoDetails?> getCustomerData() async {
-    var response = await (client.clientToQuery()).query(QueryOptions(
-      document: gql(
-        mutation.getCustomerData(),
+    var response = await (client.clientToQuery()).query(
+      QueryOptions(
+        document: gql(
+          mutation.getCustomerData(),
+        ),
+        fetchPolicy: FetchPolicy.networkOnly,
+        parserFn: (json) {
+          return AccountInfoDetails.fromJson(json['accountInfo']);
+        },
       ),
-      fetchPolicy: FetchPolicy.networkOnly,
-      parserFn: (json) {
-        return AccountInfoDetails.fromJson(json['accountInfo']);
-      },
-    ));
+    );
 
     return handleResponse(
       response,
@@ -272,9 +261,7 @@ class ApiClient {
 
   Future<CmsPage?> getCmsPageDetails(String id) async {
     var response = await (client.clientToQuery()).mutate(MutationOptions(
-      document: gql(
-        mutation.getCmsPageDetails(id),
-      ),
+      document: gql(mutation.getCmsPageDetails(id)),
       cacheRereadPolicy: CacheRereadPolicy.mergeOptimistic,
       fetchPolicy: FetchPolicy.cacheAndNetwork,
     ));
@@ -286,11 +273,12 @@ class ApiClient {
   }
 
   Future<GetFilterAttribute?> getFilterAttributes(String categorySlug) async {
-    var response = await (client.clientToQuery()).mutate(MutationOptions(
-        document: gql(
-          mutation.getFilterAttributes(categorySlug),
-        ),
-        fetchPolicy: FetchPolicy.networkOnly));
+    var response = await (client.clientToQuery()).mutate(
+      MutationOptions(
+        document: gql(mutation.getFilterAttributes(categorySlug)),
+        fetchPolicy: FetchPolicy.networkOnly,
+      ),
+    );
 
     return handleResponse(
       response,
@@ -299,13 +287,13 @@ class ApiClient {
     );
   }
 
-  Future<NewProductsModel?> getAllProducts(
-      {List<Map<String, dynamic>>? filters, int? page}) async {
-    var response = await (client.clientToQuery()).query(QueryOptions(
-        document: gql(
-          mutation.allProductsList(filters: filters ?? [], page: page ?? 1),
-        ),
-        fetchPolicy: FetchPolicy.networkOnly));
+  Future<NewProductsModel?> getAllProducts({List<Map<String, dynamic>>? filters, int? page}) async {
+    var response = await (client.clientToQuery()).query(
+      QueryOptions(
+        document: gql(mutation.allProductsList(filters: filters ?? [], page: page ?? 1)),
+        fetchPolicy: FetchPolicy.networkOnly,
+      ),
+    );
     return handleResponse(
       response,
       'allProducts',
@@ -327,8 +315,7 @@ class ApiClient {
     );
   }
 
-  Future<AddToCartModel?> updateItemToCart(
-      List<Map<dynamic, String>> items) async {
+  Future<AddToCartModel?> updateItemToCart(List<Map<dynamic, String>> items) async {
     var response = await (client.clientToQuery()).query(QueryOptions(
         document: gql(
           mutation.updateItemToCart(items: items),
@@ -458,17 +445,11 @@ class ApiClient {
     );
   }
 
-  Future<SignInModel?> socialLogin(String email, String firstName,
-      String lastName, String phone, String signUpType) async {
+  Future<SignInModel?> socialLogin(String email, String firstName, String lastName, String phone, String signUpType) async {
     var response = await (client.clientToQuery()).mutate(
       MutationOptions(
           document: gql(
-            mutation.getSocialLoginResponse(
-                firstName: firstName,
-                lastName: lastName,
-                email: email,
-                phone: phone,
-                signUpType: signUpType),
+            mutation.getSocialLoginResponse(firstName: firstName, lastName: lastName, email: email, phone: phone, signUpType: signUpType),
           ),
           fetchPolicy: FetchPolicy.networkOnly),
     );
@@ -541,17 +522,7 @@ class ApiClient {
   ) async {
     var response = await (client.clientToQuery()).mutate(MutationOptions(
         document: gql(
-          mutation.updateAccount(
-              firstName: firstName,
-              lastName: lastName,
-              email: email,
-              gender: gender,
-              dateOfBirth: dateOfBirth,
-              phone: phone,
-              oldPassword: oldpassword,
-              password: password,
-              confirmPassword: confirmPassword,
-              avatar: avatar),
+          mutation.updateAccount(firstName: firstName, lastName: lastName, email: email, gender: gender, dateOfBirth: dateOfBirth, phone: phone, oldPassword: oldpassword, password: password, confirmPassword: confirmPassword, avatar: avatar),
         ),
         fetchPolicy: FetchPolicy.networkOnly));
     return handleResponse(
@@ -630,23 +601,10 @@ class ApiClient {
   }
 
   //Get orders list
-  Future<OrdersListModel?> getOrderList(
-      String? id,
-      String? startDate,
-      String? endDate,
-      String? status,
-      double? total,
-      int? page
-      ) async {
+  Future<OrdersListModel?> getOrderList(String? id, String? startDate, String? endDate, String? status, double? total, int? page) async {
     var response = await (client.clientToQuery()).query(QueryOptions(
         document: gql(
-          mutation.getOrderList(
-              id: id,
-              startDate: startDate,
-              endDate: endDate,
-              total: total,
-              status: status,
-              page: page),
+          mutation.getOrderList(id: id, startDate: startDate, endDate: endDate, total: total, status: status, page: page),
         ),
         fetchPolicy: FetchPolicy.networkOnly));
 
@@ -758,19 +716,7 @@ class ApiClient {
   ) async {
     var response = await (client.clientToQuery()).mutate(MutationOptions(
         document: gql(
-          mutation.createNewAddress(
-              companyName: companyName,
-              firstName: firstName,
-              lastName: lastName,
-              address: address,
-              address2: address2,
-              country: country,
-              state: state,
-              city: city,
-              postCode: postCode,
-              phone: phone,
-              vatId: vatId,
-              isDefault: isDefault),
+          mutation.createNewAddress(companyName: companyName, firstName: firstName, lastName: lastName, address: address, address2: address2, country: country, state: state, city: city, postCode: postCode, phone: phone, vatId: vatId, isDefault: isDefault),
         ),
         fetchPolicy: FetchPolicy.networkOnly));
 
@@ -798,19 +744,7 @@ class ApiClient {
   ) async {
     var response = await (client.clientToQuery()).mutate(MutationOptions(
         document: gql(
-          mutation.updateAddress(
-              id: id,
-              companyName: companyName,
-              firstName: firstName,
-              lastName: lastName,
-              address: address,
-              address2: address2,
-              country: country,
-              state: state,
-              city: city,
-              postCode: postCode,
-              phone: phone,
-              vatId: vatId),
+          mutation.updateAddress(id: id, companyName: companyName, firstName: firstName, lastName: lastName, address: address, address2: address2, country: country, state: state, city: city, postCode: postCode, phone: phone, vatId: vatId),
         ),
         fetchPolicy: FetchPolicy.networkOnly));
 
@@ -831,7 +765,7 @@ class ApiClient {
     return handleResponse(
       response,
       'countries',
-          (json) => CountriesData.fromJson(json),
+      (json) => CountriesData.fromJson(json),
     );
   }
 
@@ -846,7 +780,7 @@ class ApiClient {
     return handleResponse(
       response,
       'paymentMethods',
-          (json) => PaymentMethods.fromJson(json),
+      (json) => PaymentMethods.fromJson(json),
     );
   }
 
@@ -861,7 +795,7 @@ class ApiClient {
     return handleResponse(
       response,
       'savePayment',
-          (json) => SavePayment.fromJson(json),
+      (json) => SavePayment.fromJson(json),
     );
   }
 
@@ -876,7 +810,7 @@ class ApiClient {
     return handleResponse(
       response,
       'placeOrder',
-          (json) => SaveOrderModel.fromJson(json),
+      (json) => SaveOrderModel.fromJson(json),
     );
   }
 
@@ -904,46 +838,21 @@ class ApiClient {
       String? shippingCity,
       String? shippingPostCode,
       String? shippingPhone,
-      int id, {
-        int? billingId,
-        int? shippingId}
-      ) async {
+      int id,
+      {int? billingId,
+      int? shippingId}) async {
     var response = await (client.clientToQuery()).mutate(MutationOptions(
         document: gql(
-          mutation.checkoutSaveAddress(
-            billingCompanyName,
-            billingFirstName,
-            billingLastName,
-            billingAddress,
-            billingEmail,
-            billingAddress2,
-            billingCountry,
-            billingState,
-            billingCity,
-            billingPostCode,
-            billingPhone,
-            shippingCompanyName,
-            shippingFirstName,
-            shippingLastName,
-            shippingAddress,
-            shippingEmail,
-            shippingAddress2,
-            shippingCountry,
-            shippingState,
-            shippingCity,
-            shippingPostCode,
-            shippingPhone,
-            id,
-            billingId: billingId ?? 0,
-            shippingId: shippingId ?? 0
-          ),
+          mutation.checkoutSaveAddress(billingCompanyName, billingFirstName, billingLastName, billingAddress, billingEmail, billingAddress2, billingCountry, billingState, billingCity, billingPostCode, billingPhone, shippingCompanyName, shippingFirstName, shippingLastName, shippingAddress,
+              shippingEmail, shippingAddress2, shippingCountry, shippingState, shippingCity, shippingPostCode, shippingPhone, id,
+              billingId: billingId ?? 0, shippingId: shippingId ?? 0),
         ),
         fetchPolicy: FetchPolicy.networkOnly));
 
     return handleResponse(
       response,
       'saveCheckoutAddresses',
-          (json) => SaveCheckoutAddresses.fromJson(json),
+      (json) => SaveCheckoutAddresses.fromJson(json),
     );
   }
 
@@ -956,13 +865,13 @@ class ApiClient {
     return handleResponse(
       response,
       'compareProducts',
-          (json) => CompareProductsData.fromJson(json),
+      (json) => CompareProductsData.fromJson(json),
     );
   }
 
   Future<GraphQlBaseModel?> removeFromCompare(
-      int id,
-      ) async {
+    int id,
+  ) async {
     var response = await (client.clientToQuery()).mutate(MutationOptions(
         document: gql(
           mutation.removeFromCompare(
@@ -974,7 +883,7 @@ class ApiClient {
     return handleResponse(
       response,
       'removeFromCompareProduct',
-          (json) => GraphQlBaseModel.fromJson(json),
+      (json) => GraphQlBaseModel.fromJson(json),
     );
   }
 
@@ -988,38 +897,25 @@ class ApiClient {
     return handleResponse(
       response,
       'removeAllCompareProducts',
-          (json) => GraphQlBaseModel.fromJson(json),
+      (json) => GraphQlBaseModel.fromJson(json),
     );
   }
 
-  Future<AddReviewModel?> addReview(
-      String name,
-      String title,
-      int rating,
-      String comment,
-      int productId,
-      List<Map<String, String>> attachments) async {
+  Future<AddReviewModel?> addReview(String name, String title, int rating, String comment, int productId, List<Map<String, String>> attachments) async {
     var response = await (client.clientToQuery()).mutate(MutationOptions(
         document: gql(
-          mutation.addReview(
-              name = name,
-              title = title,
-              rating = rating,
-              comment = comment,
-              productId = productId,
-              attachments = attachments),
+          mutation.addReview(name = name, title = title, rating = rating, comment = comment, productId = productId, attachments = attachments),
         ),
         fetchPolicy: FetchPolicy.networkOnly));
 
     return handleResponse(
       response,
       'createReview',
-          (json) => AddReviewModel.fromJson(json),
+      (json) => AddReviewModel.fromJson(json),
     );
   }
 
-  Future<DownloadableProductModel?> getCustomerDownloadableProducts(
-      int page, int limit) async {
+  Future<DownloadableProductModel?> getCustomerDownloadableProducts(int page, int limit) async {
     var response = await (client.clientToQuery()).query(QueryOptions(
         document: gql(
           mutation.downloadableProductsCustomer(page, limit),
@@ -1029,7 +925,7 @@ class ApiClient {
     return handleResponse(
       response,
       'downloadableLinkPurchases',
-          (json) => DownloadableProductModel.fromJson(json),
+      (json) => DownloadableProductModel.fromJson(json),
     );
   }
 
@@ -1043,7 +939,7 @@ class ApiClient {
     return handleResponse(
       response,
       'downloadLink',
-          (json) => DownloadLink.fromJson(json),
+      (json) => DownloadLink.fromJson(json),
     );
   }
 }
